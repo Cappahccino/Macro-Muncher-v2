@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-accent {
+    @apply bg-accent-500 hover:bg-accent-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-outline {
+    @apply border border-primary-500 text-primary-500 hover:bg-primary-50 font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  .progress-ring {
+    @apply rounded-full transform transition-all duration-500 ease-in-out;
+  }
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 font-sans;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Custom animations for gamification elements */
+@keyframes celebrate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.celebrate {
+  animation: celebrate 0.5s ease-in-out;
+}
+
+/* Glowing effect for achievements */
+.achievement-glow {
+  box-shadow: 0 0 15px 5px rgba(139, 92, 246, 0.5);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Macro progress bar styles */
+.macro-progress-container {
+  @apply w-full h-4 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.macro-progress-bar {
+  @apply h-full rounded-full transition-all duration-500 ease-out;
+}
+
+.protein-bar { @apply bg-accent-500; }
+.carbs-bar { @apply bg-primary-500; }
+.fat-bar { @apply bg-secondary-500; }
