@@ -1,143 +1,86 @@
-import React, { useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiHome, 
-  FiPieChart, 
-  FiSearch, 
-  FiCalendar, 
-  FiAward, 
-  FiFlag, 
-  FiUser,
-  FiPlusCircle,
-  FiX
-} from 'react-icons/fi';
+import React from 'react';
+import { Outlet, NavLink } from 'react-router-dom';
+import { FiHome, FiList, FiUser, FiActivity, FiAward } from 'react-icons/fi';
+import { useGamificationStore } from '../stores/gamificationStore';
 
 const MainLayout: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const { profile, showAchievementModal, closeAchievementModal, lastUnlockedAchievement } = useGamificationStore();
   
+  // Define navigation items
   const navItems = [
-    { icon: <FiHome size={24} />, path: '/', label: 'Home' },
-    { icon: <FiCalendar size={24} />, path: '/food-log', label: 'Food Log' },
-    { icon: <FiPieChart size={24} />, path: '/stats', label: 'Stats' },
-    { icon: <FiAward size={24} />, path: '/achievements', label: 'Achieve' },
-    { icon: <FiUser size={24} />, path: '/profile', label: 'Profile' },
-  ];
-  
-  const quickAddItems = [
-    { label: 'Scan Food', action: () => navigate('/food-search?mode=scan') },
-    { label: 'Search Food', action: () => navigate('/food-search') },
-    { label: 'Quick Add', action: () => navigate('/food-search?mode=quick') },
+    { path: '/', label: 'Home', icon: <FiHome size={24} /> },
+    { path: '/food-log', label: 'Food Log', icon: <FiList size={24} /> },
+    { path: '/stats', label: 'Stats', icon: <FiActivity size={24} /> },
+    { path: '/achievements', label: 'Achievements', icon: <FiAward size={24} /> },
+    { path: '/profile', label: 'Profile', icon: <FiUser size={24} /> },
   ];
   
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Main Content Area */}
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Main content area */}
       <main className="flex-1 pb-20">
         <Outlet />
       </main>
       
-      {/* Quick Add Menu Overlay */}
-      <AnimatePresence>
-        {quickAddOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div 
-              className="fixed inset-0 bg-black/50 z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setQuickAddOpen(false)}
-            />
-            
-            {/* Quick Add Menu */}
-            <motion.div 
-              className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+      {/* Bottom navigation bar */}
+      <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-10">
+        <div className="flex justify-between max-w-lg mx-auto">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) => `
+                flex flex-col items-center text-xs p-3 flex-1
+                ${isActive 
+                  ? 'text-primary-600' 
+                  : 'text-gray-500 hover:text-gray-700'
+                }
+              `}
             >
-              {quickAddItems.map((item, index) => (
-                <motion.button
-                  key={index}
-                  className="bg-white text-primary-700 rounded-full py-3 px-6 shadow-lg font-semibold flex items-center justify-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0,
-                    transition: { delay: 0.05 * index } 
-                  }}
-                  exit={{ 
-                    opacity: 0, 
-                    y: 20,
-                    transition: { delay: 0.05 * (quickAddItems.length - index - 1) } 
-                  }}
-                  onClick={() => {
-                    setQuickAddOpen(false);
-                    item.action();
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {item.label}
-                </motion.button>
-              ))}
-              
-              {/* Close Button */}
-              <motion.button
-                className="bg-secondary-500 text-white rounded-full p-4 mx-auto mt-2 shadow-lg"
-                onClick={() => setQuickAddOpen(false)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <FiX size={24} />
-              </motion.button>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-      
-      {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-30">
-        <div className="flex items-center justify-around h-16">
-          {navItems.map((item, index) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <button
-                key={index}
-                onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center px-3 py-2 transition-colors relative ${
-                  isActive ? 'text-primary-600' : 'text-gray-500'
-                }`}
-              >
-                {item.icon}
-                <span className="text-xs mt-1">{item.label}</span>
-                {isActive && (
-                  <motion.div
-                    className="absolute -bottom-0 w-1/2 h-1 bg-primary-500 rounded-t-full"
-                    layoutId="activeTab"
-                  />
-                )}
-              </button>
-            );
-          })}
-          
-          {/* Center Quick Add Button */}
-          <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2">
-            <motion.button
-              className="bg-primary-500 text-white rounded-full p-3 shadow-lg"
-              onClick={() => setQuickAddOpen(!quickAddOpen)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              animate={quickAddOpen ? { rotate: 45 } : { rotate: 0 }}
-            >
-              {quickAddOpen ? <FiX size={28} /> : <FiPlusCircle size={28} />}
-            </motion.button>
-          </div>
+              {item.icon}
+              <span className="mt-1">{item.label}</span>
+            </NavLink>
+          ))}
         </div>
       </nav>
+      
+      {/* Achievement unlock modal */}
+      {showAchievementModal && lastUnlockedAchievement && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            
+            {/* Modal panel */}
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+              <div>
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary-100">
+                  <FiAward className="h-6 w-6 text-primary-600" aria-hidden="true" />
+                </div>
+                <div className="mt-3 text-center">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    Achievement Unlocked!
+                  </h3>
+                  <div className="mt-2">
+                    <p className="text-xl font-bold text-primary-600">{lastUnlockedAchievement.title}</p>
+                    <p className="mt-1 text-sm text-gray-500">{lastUnlockedAchievement.description}</p>
+                    <p className="mt-4 text-sm font-medium text-primary-700">+{lastUnlockedAchievement.points} points</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 sm:mt-6">
+                <button
+                  type="button"
+                  className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
+                  onClick={closeAchievementModal}
+                >
+                  Awesome!
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
