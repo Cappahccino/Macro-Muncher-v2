@@ -3,6 +3,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 import { FiHome, FiList, FiUser, FiActivity, FiAward } from 'react-icons/fi';
 import { useGamificationStore } from '../stores/gamificationStore';
 import GamificationNotifier from '../components/GamificationNotifier';
+import NutritionProgressMonitor from '../components/NutritionProgressMonitor';
 
 const MainLayout: React.FC = () => {
   const { profile, showAchievementModal, closeAchievementModal, lastUnlockedAchievement } = useGamificationStore();
@@ -18,8 +19,9 @@ const MainLayout: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Include GamificationNotifier to handle achievements and streaks */}
+      {/* Include background monitoring components */}
       <GamificationNotifier />
+      <NutritionProgressMonitor />
       
       {/* Main content area */}
       <main className="flex-1 pb-20">
